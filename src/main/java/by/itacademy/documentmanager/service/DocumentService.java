@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 @AllArgsConstructor(onConstructor = @__(@Autowired))
 public class DocumentService {
 
@@ -38,7 +40,7 @@ public class DocumentService {
         try (InputStream inputStream = file.getInputStream()) {
             Metadata metadata = dropBoxClient.files()
                     .uploadBuilder("/documents/" + file.getOriginalFilename())
-                    .uploadAndFinish(file.getInputStream());
+                    .uploadAndFinish(inputStream);
 
             documentRepository.save(Document.builder()
                     .title(title)
